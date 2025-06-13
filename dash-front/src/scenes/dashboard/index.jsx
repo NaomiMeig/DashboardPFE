@@ -33,10 +33,11 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
   const location = useLocation();
   const navigate = useNavigate();
   const reportRef = useRef();
-  const isMobile = useMediaQuery("(max-width:768px)");
+ 
 
   const dataFromImport = location.state?.initialData;
 
@@ -126,13 +127,26 @@ const Dashboard = () => {
   );
 
   return (
-    <Box display="flex">
+    <Box sx={{ 
+          display: "flex",
+          minHeight: "100vh",
+          overflow: "hidden"
+        }}>
       <Sidebardash />
       <Box flex="1" m="20px" ref={reportRef}>
         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
           <Header title="DASHBOARD" subtitle={`Analyse des données (${row_count} enregistrements)`} />
           <Box>
-            <Button onClick={downloadPDF} startIcon={<DownloadOutlinedIcon />} sx={{ mr: 1 }}>Télécharger</Button>
+            <Button 
+              onClick={downloadPDF} 
+              startIcon={<DownloadOutlinedIcon />}  
+              sx={{ 
+                mr: 1,
+                backgroundColor: colors.greenAccent[600], // ou une autre couleur de ta palette color: "#fff", 
+                "&:hover": {
+                backgroundColor: colors.greenAccent[700],
+              },
+            }}>Télécharger</Button>
             <Button onClick={handleClearData} startIcon={<DeleteOutlineIcon />} color="error">Effacer</Button>
           </Box>
         </Box>
@@ -164,15 +178,34 @@ const Dashboard = () => {
           </Box>
         </Paper>
 
-        <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(240px, 1fr))" gridAutoRows="200px" gap="20px">
-          <Box gridColumn="span 2" bgcolor={colors.primary[400]} p={2} borderRadius="16px">
-            <StatBox title="Nombre de lignes" value={row_count} />
-          </Box>
+        <Box 
+           display="flex" 
+           flexDirection="column"
+           gap={isSmallScreen ? '15px' : '20px'}
+           sx={{
+              width: '100%',
+              overflowX: 'hidden',
+              padding: isSmallScreen ? '8px' : '10px'
+            }}
+          >
+          <Box 
+            display="grid"
+            gridTemplateColumns={isSmallScreen ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)'}
+            gap="20px"
+            sx={{
+              width: '100%',
+              flexShrink: 0
+            }}
+          >
+            <Box sx={{ height: isSmallScreen ? '120px' : '140px' }} bgcolor={colors.primary[400]} p={2} borderRadius="16px">
+             <StatBox title="Nombre de lignes" value={row_count} />
+            </Box>
+          
 
           {numeric_columns.slice(0, 3).map((col) => {
             const stats = calculateBasicStats(col);
             return (
-              <Box key={col} gridColumn="span 3" bgcolor={colors.primary[400]} p={2} borderRadius="16px" >
+              <Box key={col} sx={{ height: isSmallScreen ? '120px' : '140px' }} bgcolor={colors.primary[400]} p={2} borderRadius="16px" >
                 <StatBox
                   title={stats.avg?.toFixed(2) || "N/A"}
                   subtitle={`Moyenne ${col}`}
@@ -189,15 +222,17 @@ const Dashboard = () => {
               </Box>
             );
           })}
-
+          </Box>
           {selectedXAxis && selectedYAxis && (
             <Box 
-              gridColumn="span 10" 
-              gridRow="span 2" 
+              gridColumn="span 8" 
+              gridRow="span 3" 
                 sx={{
+                  width: '100%',
+                  height: isSmallScreen ? '300px' : '400px',
                   bgcolor: colors.primary[500],
-                  p: 3,
-                  borderRadius: "24px",
+                  p: 2,
+                  borderRadius: "16px",
                   boxShadow: 3,
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -207,7 +242,7 @@ const Dashboard = () => {
                 }}
             >
               <Typography variant="h5" mb={2}>📈 Évolution des {selectedYAxis} par {selectedXAxis}</Typography>
-              <Box height="400px">
+              <Box height="calc(100% - 40px)">
                 <LineChart data={data} xAxisKey={selectedXAxis} yAxisKey={selectedYAxis} isDashboard={true} />
               </Box>
             </Box>
@@ -215,12 +250,14 @@ const Dashboard = () => {
 
           {selectedPieCategory && selectedPieValue && (
             <Box 
-              gridColumn="span 12" 
+              gridColumn="span 8" 
               gridRow="span 3" 
               sx={{
+                  width: '100%',
+                  height: isSmallScreen ? '300px' : '400px',
                   bgcolor: colors.primary[500],
-                  p: 3,
-                  borderRadius: "24px",
+                  p: 2,
+                  borderRadius: "16px",
                   boxShadow: 3,
                   transition: "all 0.3s ease",
                   "&:hover": {
@@ -230,7 +267,7 @@ const Dashboard = () => {
               }}
             >
               <Typography variant="h5" mb={2}>Répartition par {selectedPieCategory}</Typography>
-              <Box height="400px">
+              <Box height="calc(100% - 40px)">
                 <PieChart data={data} idKey={selectedPieCategory} valueKey={selectedPieValue} />
               </Box>
             </Box>
@@ -238,9 +275,11 @@ const Dashboard = () => {
 
           {selectedBarXAxis && selectedBarYAxis && (
             <Box 
-             gridColumn="span 12" 
+             gridColumn="span 8" 
              gridRow="span 3" 
              sx={{
+                  width: '100%',
+                  height: isSmallScreen ? '300px' : '400px',
                   bgcolor: colors.primary[500],
                   p: 3,
                   borderRadius: "24px",
@@ -253,7 +292,7 @@ const Dashboard = () => {
               }}
             >
               <Typography variant="h5" mb={2}>Histogramme des {selectedBarYAxis} par {selectedBarXAxis}</Typography>
-              <Box height="400px">
+              <Box height="calc(100% - 40px)">
                 <BarChart data={data} xAxisKey={selectedBarXAxis} yAxisKey={selectedBarYAxis} />
               </Box>
             </Box>
@@ -273,9 +312,11 @@ const Dashboard = () => {
 
             return (
               <Box 
-                gridColumn="span 12" 
+                gridColumn="span 8" 
                 gridRow="span 3" 
                 sx={{
+                  width: '100%',
+                  height: isSmallScreen ? '300px' : '400px',
                   bgcolor: colors.primary[500],
                   p: 3,
                   borderRadius: "24px",
@@ -301,5 +342,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 

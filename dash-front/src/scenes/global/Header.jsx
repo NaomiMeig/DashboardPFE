@@ -51,7 +51,7 @@ const Header = () => {
               to="/" 
               sx={{ fontWeight: 700, fontSize: "1.2rem", textTransform: "none" }}
             >
-              MyApp
+              DataDash
             </Button>
           </Typography>
 

@@ -13,17 +13,19 @@ import { tokens } from "../../theme";
 const Home = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const sidebarWidth = 180;
+  
   return (
-    <Box sx={{ display: 'flex', bgcolor: colors.primary[400] }}>
+    <Box sx={{ display: 'flex', bgcolor: colors.primary[400], minHeight: '100vh' }} >
       <CssBaseline />
       
       {/* Sidebar - Fixed position */}
       <Box
         component="nav"
         sx={{
-          width: { md: 250 },
-          flexShrink: { md: 0 },
+          width: sidebarWidth,
+          flexShrink: 0,
+          display: { xs: 'none', md: 'block' }
         }}
       >
         <Drawer
@@ -31,7 +33,7 @@ const Home = () => {
           sx={{
             display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': { 
-              width: 250,
+              width: 180,
               boxSizing: 'border-box',
               position: 'relative',
               height: '100vh',
@@ -51,21 +53,30 @@ const Home = () => {
         component="main" 
         sx={{ 
           flexGrow: 1,
-          p: 3,
-          width: { md: `calc(100% - 250px)` },
+          p: 0,
+          ml: { md: '180px' },
+          width: { md: `calc(100% - 180px)` },
           backgroundColor: colors.primary[400],
         }}
       >
         {/* Hero Section */}
-        <Grid container spacing={4} alignItems="stretch" sx={{ mb: 8 }}>
-          <Grid item xs={12} md={6}>
+        <Box sx={{ p: 3 }}>
+        <Grid container spacing={4} alignItems="center" sx={{ mb: 8 }}>
+          <Grid item xs={12} md={5}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center',
+              height: '100%'
+            }}>
             <Typography 
               variant="h2" 
               component="h1" 
               gutterBottom 
               sx={{ 
                 fontWeight: 'bold',
-                color: colors.grey[100]
+                color: colors.grey[100],
+                mb: 3
               }}
             >
               Analysez vos données.
@@ -76,7 +87,8 @@ const Home = () => {
               variant="h5" 
               paragraph
               sx={{
-                color: colors.grey[300]
+                color: colors.grey[300],
+                mb: 3
               }}
             >
               Découvrez notre tableau de bord interactif pour analyser et visualiser vos données en temps réel.
@@ -87,7 +99,7 @@ const Home = () => {
               variant="contained"
               size="large"
               sx={{ 
-                mt: 2,
+                alignSelf: 'flex-start',
                 backgroundColor: colors.blueAccent[500],
                 '&:hover': {
                   backgroundColor: colors.blueAccent[400]
@@ -96,8 +108,9 @@ const Home = () => {
             >
               Accéder au tableau de bord
             </Button>
+          </Box>
           </Grid>
-         <Grid item xs={12} md={6}>
+         <Grid item xs={12} md={7}>
             <Paper 
                 elevation={3} 
                 sx={{ 
@@ -106,7 +119,8 @@ const Home = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: colors.primary[500],
-                    height: '100%'
+                    height: '100%',
+                    minHeight: 400
                 }}
             >
             <Box sx={{ width: '100%', height: 300, position: 'relative' }}>
@@ -164,6 +178,7 @@ const Home = () => {
         </Paper>
         </Grid>
         </Grid>
+        </Box>
 
         {/* Features Section */}
         <Box sx={{ mb: 8 }}>

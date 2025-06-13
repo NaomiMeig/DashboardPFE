@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
+import UserHistory from "../components/UserHistory";
 
 // Icons
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
@@ -38,114 +38,141 @@ const Sidebardash = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
   const location = useLocation();
-  const importedData = location.state?.initialData || [];
-  const userRole = localStorage.getItem("userRole"); // "admin" ou "user"
+  const userRole = localStorage.getItem("userRole");
 
   return (
     <Box
       sx={{
+        position: "fixed",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 1000,
         "& .pro-sidebar": {
-          width: isCollapsed ? "80px" : "200px", // Ajuste ici la largeur
-          minWidth: isCollapsed ? "80px" : "200px",
-          transition: "all 0.3s ease-in-out",
+          height: "100%",
+          width: isCollapsed ? "80px" : "250px",
+          minWidth: isCollapsed ? "80px" : "250px",
         },
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
         },
         "& .pro-icon-wrapper": {
           backgroundColor: "transparent !important",
         },
         "& .pro-inner-item": {
-          padding: "5px 35px 5px 20px !important",
+          padding: "8px 35px 8px 20px !important",
         },
         "& .pro-inner-item:hover": {
-          color: "#868dfb !important",
+          color: `${colors.greenAccent[500]} !important`,
         },
         "& .pro-menu-item.active": {
-          color: "#6870fa !important",
+          color: `${colors.greenAccent[500]} !important`,
         },
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
-          {/* Logo & menu toggle */}
+          {/* Logo et bouton de menu */}
           <MenuItem
-            icon={<MenuOutlinedIcon />}
             onClick={() => setIsCollapsed(!isCollapsed)}
-            style={{ margin: "10px 0 20px 0", color: colors.grey[100] }}
+            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            style={{
+              margin: "10px 0 20px 0",
+              color: colors.grey[100],
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isCollapsed ? "center" : "space-between",
+              padding: isCollapsed ? "10px" : "15px",
+            }}
           >
             {!isCollapsed && (
-              <Box 
-               display="flex" 
-               justifyContent="space-between" 
-               alignItems="center" 
-               ml="15px"
-               sx={{
-                  transition: "opacity 0.3s ease-in-out",
-                  opacity: isCollapsed ? 0 : 1,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                }}
-               >
-                <Typography variant="h3" color={colors.grey[100]}>
-                  Tableau
-                </Typography>
-               
-              </Box>
+              <Typography variant="h3" color={colors.grey[100]}>
+                Tableau
+              </Typography>
             )}
+            {!isCollapsed && <MenuOutlinedIcon />}
           </MenuItem>
 
-          {/* Menu commun à tous */}
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
-              to="/dashboard"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Graphiques"
-              to="/charts"
-              state={{ initialData: location.state?.initialData }} // Ajoutez cette ligne
-              icon={<BarChartOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Rapports"
-              to="/reports"
-              icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Carte"
-              to="/map"
-              icon={<MapOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          </Box>
-
-          {/* Partie admin uniquement */}
-          {userRole === "admin" && (
-            <>
-              <Typography
-                variant="h6"
-                color={colors.grey[300]}
-                sx={{ m: "15px 0 5px 20px" }}
-              >
-                Admin
-              </Typography>
+          {/* Menu principal */}
+          <Box 
+            sx={{ 
+              flex: 1,
+              overflowY: "auto",
+              "&::-webkit-scrollbar": {
+                width: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: colors.greenAccent[500],
+                borderRadius: "2px",
+              },
+            }}
+          >
+            <Box paddingLeft={isCollapsed ? undefined : "10%"}>
               <Item
-                title="Panel Admin"
-                to="/admin"
-                icon={<AdminPanelSettingsIcon />}
+                title="Dashboard"
+                to="/dashboard"
+                icon={<HomeOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
-            </>
+              <Item
+                title="Graphiques"
+                to="/charts"
+                state={{ initialData: location.state?.initialData }}
+                icon={<BarChartOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Rapports"
+                to="/reports"
+                icon={<TimelineOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Carte"
+                to="/map"
+                icon={<MapOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+
+              {userRole === "admin" && (
+                <>
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[300]}
+                    sx={{ m: "15px 0 5px 20px" }}
+                  >
+                    Admin
+                  </Typography>
+                  <Item
+                    title="Panel Admin"
+                    to="/admin"
+                    icon={<AdminPanelSettingsIcon />}
+                    selected={selected}
+                    setSelected={setSelected}
+                  />
+                </>
+              )}
+            </Box>
+          </Box>
+
+          {/* Historique utilisateur */}
+          {!isCollapsed && (
+            <Box 
+              sx={{ 
+                borderTop: `1px solid ${colors.grey[800]}`,
+                padding: "15px",
+                marginTop: "auto" // Pousse vers le bas
+              }}
+            >
+              <UserHistory />
+            </Box>
           )}
         </Menu>
       </ProSidebar>
@@ -154,3 +181,4 @@ const Sidebardash = () => {
 };
 
 export default Sidebardash;
+

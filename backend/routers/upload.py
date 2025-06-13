@@ -7,6 +7,7 @@ import io
 from database import get_db
 from models.log import Log
 from models.user import User
+from models.datasource import DataSource
 from routers.auth import get_current_user
 
 router = APIRouter(prefix="/api", tags=["Upload"])
@@ -57,6 +58,12 @@ async def upload_file(
             user_id=current_user.id
         )
         db.add(new_log)
+
+        new_source = DataSource(
+            filename=filename,
+            user_id=current_user.id
+        )
+        db.add(new_source)
         db.commit()
         
         return temporary_storage

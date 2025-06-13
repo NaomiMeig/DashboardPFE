@@ -21,6 +21,7 @@ from routers import upload
 from routers import auth  # Import du routeur d'authentification
 from routers import admin
 from routers import log as log_router  # Import du routeur de logs
+from routers import datasource
 from fastapi.middleware.cors import CORSMiddleware
 
 # --- Database Setup ---
@@ -54,6 +55,7 @@ app.include_router(auth.router)  # Inclusion du routeur d'authentification
 app.include_router(admin.admin_router)
 app.include_router(log_router.router)  # Inclusion du routeur de logs
 app.include_router(upload.router)
+app.include_router(datasource.router)
 
 # --- Modèles Pydantic ---
 class UserSchema(BaseModel):
